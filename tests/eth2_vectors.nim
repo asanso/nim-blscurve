@@ -316,6 +316,20 @@ testGen(aggregate_verify, test):
       doAssert not pubkeys.val.aggregateVerify(wrongProofs, msgs.val, signature.val), block:
         "\nAggregate Verification with wrong proof-of-possession succeeded"
 
+testGen(deserialization_G2, test):
+  var  
+    sig{.noInit.}: Signature
+  
+  let
+    expected = bool.getFrom(test, Output) 
+    signature = sig.fromHex(test["input"]["pubkey"].getStr())
+  
+  doAssert signature == expected.val, block:
+    "\nVerification differs from expected \n" &
+    "   computed: " & $signature & "\n" &
+    "   expected: " & $expected.val
+
+
 suite "ETH 2.0 " & BLS_ETH2_SPEC & " test vectors - " & $BLS_BACKEND:
   test "[" & BLS_ETH2_SPEC & "] sign(SecretKey, message) -> Signature":
     test_sign()
@@ -327,3 +341,6 @@ suite "ETH 2.0 " & BLS_ETH2_SPEC & " test vectors - " & $BLS_BACKEND:
     test_fast_aggregate_verify()
   test "[" & BLS_ETH2_SPEC & "] AggregateVerify(openarray[PublicKey, message], Signature) -> bool":
     test_aggregate_verify()
+  test "[" & BLS_ETH2_SPEC & "] Deserialization_G2(Signature) -> bool":
+    test_deserialization_G2()
+
