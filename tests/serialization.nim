@@ -62,6 +62,20 @@ proc test_serialization() =
     "00000000000000000000000000000000000000000000000000000000000003ec"
   ]
 
+  const bad_signatures = [
+    # fails_with_b_flag_and_a_flag_true
+    "e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    # xIm is the modulus plus 1, xRe is zero
+    "9a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaac000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    # deserialization_fails_too_many_byte
+    "8123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdefff",
+    # fails_not_in_G2
+    "8123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    # fails_with_b_flag_and_x_nonzero
+    "c123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  ]
+
+
   # Pubkey serialization
   # --------------------
   for seckey in seckeys:
@@ -120,6 +134,14 @@ proc test_serialization() =
 
       doAssert sig == sig2
       doAssert sig == sig3
+
+  # Signature serialization
+  # -----------------------
+  for signature in bad_signatures:
+    var  
+      sig{.noInit.}: Signature
+ 
+    doAssert not sig.fromHex(signature)
 
   echo "SUCCESS"
 
