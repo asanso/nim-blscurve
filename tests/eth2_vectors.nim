@@ -336,7 +336,7 @@ testGen(deserialization_G2, test):
   
   let
     expected = bool.getFrom(test, Output) 
-    signature = sig.fromHex(test["input"]["pubkey"].getStr())
+    signature = sig.fromHex(test["input"]["signature"].getStr())
   
   doAssert signature == expected.val, block:
     "\nVerification differs from expected \n" &
